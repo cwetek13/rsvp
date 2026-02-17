@@ -1,0 +1,1148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>NEW NOTIFICATION FROM A&amp;G</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=VT323&display=swap" rel="stylesheet">
+<style>
+:root {
+  --silver-hi:  #eceef1;
+  --silver-mid: #b2b6be;
+  --silver-lo:  #6e7280;
+  --silver-dk:  #3c3f48;
+  /* Default theme: ice blue */
+  --screen-bg:  #0a1420;
+  --screen-txt: #44ccff;
+  /* Key press glow — matches theme */
+  --key-glow-hi:  #c8eeff;
+  --key-glow-mid: #66d4ff;
+  --key-glow-lo:  #44ccff;
+  --key-glow-shadow: rgba(68,204,255,0.55);
+  --key-glow-shadow2: rgba(68,204,255,0.2);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body {
+  width: 100%; min-height: 100vh;
+  background: #ffffff;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Share Tech Mono', monospace;
+  overflow: hidden;
+}
+
+/* ══════════════════════════
+   PHONE WRAP — FIXED 280px, scales on tiny screens
+══════════════════════════ */
+.phone-wrap {
+  position: relative;
+  width: 280px;
+  flex-shrink: 0;
+  opacity: 0;
+  animation: dropIn 1s cubic-bezier(0.22,1,0.36,1) 0.3s forwards;
+}
+@media (max-width: 310px) {
+  .phone-wrap { transform: scale(0.86); transform-origin: top center; }
+}
+@media (max-height: 560px) and (max-width: 420px) {
+  .phone-wrap { transform: scale(0.78); transform-origin: center center; }
+}
+
+@keyframes dropIn {
+  0%   { opacity:0; transform:rotate(-5deg) translateY(-60px) scale(0.9); }
+  55%  { opacity:1; transform:rotate(2deg) translateY(10px) scale(1.01); }
+  75%  { transform:rotate(-0.5deg) translateY(-3px); }
+  100% { opacity:1; transform:rotate(0deg) translateY(0) scale(1); }
+}
+.phone-wrap::after {
+  content:'';
+  position:absolute;
+  bottom:-22px; left:8%; width:84%; height:30px;
+  background:radial-gradient(ellipse at 50% 0%, rgba(0,0,0,0.2), transparent 75%);
+  filter:blur(8px); border-radius:50%; z-index:-1;
+}
+
+/* ══════════════════════════
+   PHONE SHELL — K750i
+══════════════════════════ */
+.phone {
+  width:100%;
+  background:linear-gradient(168deg,
+    var(--silver-hi) 0%, #d5d8de 22%,
+    var(--silver-mid) 52%, var(--silver-lo) 78%, var(--silver-dk) 100%
+  );
+  border-radius:26px 26px 18px 18px;
+  padding:13px 11px 10px;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.65),
+    0 0 0 2px var(--silver-dk),
+    0 24px 48px rgba(0,0,0,0.16),
+    0 8px 18px rgba(0,0,0,0.1),
+    inset 0 1px 0 rgba(255,255,255,0.92),
+    inset 0 -1px 3px rgba(0,0,0,0.2);
+  position:relative;
+}
+.phone::before {
+  content:''; position:absolute;
+  top:14px; bottom:14px; left:5px; width:4px;
+  background:linear-gradient(180deg,rgba(255,255,255,0.75),rgba(255,255,255,0.1));
+  border-radius:3px;
+}
+
+/* ── Top strip ── */
+.top-strip {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 6px; margin-bottom:9px;
+}
+.camera {
+  width:13px; height:13px;
+  background:radial-gradient(circle at 35% 32%,#2a2a2a,#000);
+  border-radius:50%; border:2px solid #7a8090;
+  box-shadow:0 0 0 1px rgba(255,255,255,0.18),inset 0 0 4px rgba(80,160,255,0.2);
+}
+.speaker { display:flex; align-items:flex-end; gap:2px; }
+.speaker-bar { width:2px; background:var(--silver-dk); border-radius:1px; opacity:0.6; }
+.led {
+  width:5px; height:5px; background:#00ff88; border-radius:50%;
+  box-shadow:0 0 5px #00ff88,0 0 10px rgba(0,255,136,0.35);
+  animation:ledBlink 2.4s ease-in-out infinite;
+}
+@keyframes ledBlink { 0%,100%{opacity:1} 48%,52%{opacity:0.1} }
+
+/* ── Screen — FIXED HEIGHT ── */
+.screen-outer {
+  background:var(--silver-dk); border-radius:7px; padding:3px;
+  margin-bottom:8px; box-shadow:inset 0 2px 6px rgba(0,0,0,0.65);
+}
+.screen {
+  background:var(--screen-bg); border-radius:5px;
+  padding:7px 7px;
+  height: 200px;
+  position:relative; overflow:hidden;
+  display:flex; flex-direction:column;
+  transition: background 0.35s ease;
+}
+.screen::before {
+  content:''; position:absolute;
+  top:0; left:0; right:0; height:40%;
+  background:linear-gradient(180deg,rgba(255,255,255,0.04),transparent);
+  border-radius:5px 5px 0 0; pointer-events:none;
+}
+.screen::after {
+  content:''; position:absolute; inset:0;
+  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.07) 2px,rgba(0,0,0,0.07) 4px);
+  pointer-events:none; animation:flicker 0.13s steps(1) infinite;
+}
+@keyframes flicker { 0%,100%{opacity:1} 50%{opacity:0.95} }
+
+.status-bar {
+  display:flex; justify-content:space-between; align-items:center;
+  margin-bottom:5px; padding-bottom:4px;
+  border-bottom:1px solid rgba(68,204,255,0.15);
+  position:relative; z-index:1; flex-shrink:0;
+}
+.status-time {
+  font-family:'VT323',monospace; font-size:0.82rem;
+  color:var(--screen-txt); text-shadow:0 0 6px currentColor;
+  transition: color 0.35s;
+}
+.signal-bars { display:flex; align-items:flex-end; gap:1.5px; }
+.signal-bar { width:3px; background:var(--screen-txt); border-radius:1px; opacity:0.8; transition:background 0.35s; }
+
+.sms-header {
+  font-family:'VT323',monospace; font-size:0.72rem;
+  color:var(--screen-txt); opacity:0.38;
+  margin-bottom:4px; position:relative; z-index:1; flex-shrink:0;
+  transition: color 0.35s;
+}
+.sms-bubble {
+  font-family:'VT323',monospace; font-size:1.02rem;
+  color:var(--screen-txt); line-height:1.35;
+  word-break:break-word;
+  text-shadow:0 0 5px currentColor;
+  position:relative; z-index:1; flex:1;
+  overflow-y:auto;
+  transition: color 0.35s;
+}
+.cursor {
+  display:inline-block; width:7px; height:12px;
+  background:var(--screen-txt); vertical-align:text-bottom; margin-left:1px;
+  animation:cursorBlink 0.65s steps(1) infinite;
+  box-shadow:0 0 5px currentColor;
+  transition: background 0.35s;
+}
+@keyframes cursorBlink { 0%,49%{opacity:1} 50%,100%{opacity:0} }
+
+/* ── Screen panels ── */
+.screen-panel {
+  position:relative; z-index:1;
+  margin-top:8px; padding-top:7px;
+  border-top:1px solid rgba(68,204,255,0.15);
+  display:none; flex-direction:column; gap:5px;
+  flex-shrink:0;
+  opacity:0; transition:opacity 0.5s ease;
+}
+.screen-panel.visible { display:flex; opacity:1; }
+
+.screen-btn {
+  display:flex; align-items:center; justify-content:center; gap:5px;
+  padding:5px 6px;
+  border:1px solid rgba(68,204,255,0.3);
+  border-radius:3px;
+  font-family:'VT323',monospace; font-size:0.82rem;
+  color:var(--screen-txt); text-decoration:none;
+  background:rgba(68,204,255,0.05);
+  letter-spacing:0.05em;
+  transition:background 0.15s, border-color 0.15s, color 0.35s;
+  cursor:pointer; width:100%;
+}
+.screen-btn:hover, .screen-btn:active {
+  background:rgba(68,204,255,0.14);
+  border-color:rgba(68,204,255,0.6);
+}
+
+/* ── Nav row ── */
+.nav-row {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:0 3px; margin-bottom:6px;
+}
+.soft-key {
+  font-family:'Share Tech Mono',monospace; font-size:0.58rem;
+  color:rgba(255,255,255,0.65);
+  background:linear-gradient(180deg,#585c66,#3a3d46);
+  padding:4px 9px 5px; border-radius:4px; letter-spacing:0.05em;
+  box-shadow:0 2px 0 #1c1f26,inset 0 1px 0 rgba(255,255,255,0.2);
+  cursor:pointer; user-select:none; -webkit-user-select:none;
+  transition: transform 0.08s ease, box-shadow 0.08s ease;
+}
+.soft-key:active {
+  transform: translateY(2px);
+  box-shadow:0 0 0 #1c1f26,inset 0 1px 0 rgba(255,255,255,0.1);
+  background:linear-gradient(180deg,#4a4e56,#32353e);
+}
+.dpad { position:relative; width:40px; height:40px; cursor:pointer; }
+.dpad-ring {
+  position:absolute; inset:0; border-radius:50%;
+  background:linear-gradient(140deg,var(--silver-mid),var(--silver-dk));
+  box-shadow:0 2px 4px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.25);
+}
+.dpad-center {
+  position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+  width:14px; height:14px; border-radius:50%;
+  background:linear-gradient(140deg,#505560,#2c2f38);
+  box-shadow:inset 0 1px 3px rgba(0,0,0,0.55);
+  transition: box-shadow 0.15s, background 0.15s;
+}
+.dpad:active .dpad-center {
+  background:linear-gradient(140deg,#606570,#3c3f48);
+  box-shadow:inset 0 0 6px rgba(0,0,0,0.7);
+}
+
+/* ── Keyboard ── */
+.keyboard {
+  background:linear-gradient(180deg,#585c66,#3a3d46);
+  border-radius:0 0 13px 13px;
+  padding:6px 4px 8px;
+  display:flex; flex-direction:column; gap:4px;
+}
+.kb-row { display:flex; justify-content:center; gap:4px; }
+.key {
+  flex:1; height:32px;
+  background:linear-gradient(180deg,var(--silver-hi) 0%,#ced1d8 55%,var(--silver-mid) 100%);
+  border-radius:3px;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  box-shadow:0 2px 0 #1c1f26,0 3px 4px rgba(0,0,0,0.3),inset 0 1px 0 rgba(255,255,255,0.8);
+  user-select:none; -webkit-user-select:none;
+}
+.key-num { font-family:'Share Tech Mono',monospace; font-size:0.65rem; font-weight:700; color:#1e2028; line-height:1; }
+.key-alpha { font-size:0.62rem; color:#4a4e5a; line-height:1; font-family:'Share Tech Mono',monospace; font-weight:700; }
+
+/* Key press animation — uses CSS vars for theme-matching glow */
+.key.active { animation:keyPress 0.22s ease forwards; }
+@keyframes keyPress {
+  0%   { transform:translateY(2px);
+         box-shadow:0 0 0 #1c1f26,inset 0 1px 0 rgba(255,255,255,0.3);
+         background:linear-gradient(180deg, var(--key-glow-hi), var(--key-glow-mid), var(--key-glow-lo)); }
+  40%  { box-shadow:0 0 14px var(--key-glow-shadow), 0 0 26px var(--key-glow-shadow2); }
+  100% { transform:translateY(0);
+         box-shadow:0 2px 0 #1c1f26,0 3px 4px rgba(0,0,0,0.3),inset 0 1px 0 rgba(255,255,255,0.8);
+         background:linear-gradient(180deg,var(--silver-hi) 0%,#ced1d8 55%,var(--silver-mid) 100%); }
+}
+
+/* Keyboard wrapper */
+.keyboard-wrap { position: relative; }
+
+/* T9 multi-tap input display */
+.t9-display {
+  font-family:'VT323',monospace; font-size:1.05rem;
+  color:var(--screen-txt); line-height:1.35;
+  min-height:1.4em; padding:2px 0;
+  word-break:break-word;
+  text-shadow:0 0 5px currentColor;
+  border-bottom:1px solid rgba(68,204,255,0.25);
+  transition: color 0.35s;
+}
+.t9-pending {
+  background:rgba(68,204,255,0.18);
+  border-radius:1px;
+  animation: t9PendingBlink 0.5s steps(1) infinite;
+}
+@keyframes t9PendingBlink {
+  0%,69% { background:rgba(68,204,255,0.22); }
+  70%,100% { background:rgba(68,204,255,0.06); }
+}
+.t9-hint {
+  font-family:'VT323',monospace; font-size:0.58rem;
+  color:var(--screen-txt); opacity:0.28;
+  text-align:center; margin-top:4px;
+  letter-spacing:0.03em;
+  transition: color 0.35s;
+}
+</style>
+</head>
+<body>
+
+<div class="phone-wrap">
+  <div class="phone">
+
+    <!-- Top strip -->
+    <div class="top-strip">
+      <div class="camera"></div>
+      <div class="speaker">
+        <div class="speaker-bar" style="height:3px"></div>
+        <div class="speaker-bar" style="height:6px"></div>
+        <div class="speaker-bar" style="height:8px"></div>
+        <div class="speaker-bar" style="height:8px"></div>
+        <div class="speaker-bar" style="height:6px"></div>
+        <div class="speaker-bar" style="height:3px"></div>
+      </div>
+      <div class="led"></div>
+    </div>
+
+    <!-- Screen -->
+    <div class="screen-outer">
+      <div class="screen">
+        <div class="status-bar">
+          <span class="status-time" id="clock">--:--</span>
+          <div class="signal-bars">
+            <div class="signal-bar" style="height:3px"></div>
+            <div class="signal-bar" style="height:5px"></div>
+            <div class="signal-bar" style="height:7px"></div>
+            <div class="signal-bar" style="height:9px"></div>
+          </div>
+        </div>
+        <div class="sms-header">from: Adrian &amp; Gala</div>
+        <div class="sms-bubble">
+          <span id="sms-text"></span><span class="cursor"></span>
+        </div>
+        <!-- Panel 1: RSVP prompt -->
+        <div class="screen-panel" id="panel-rsvp-cta">
+          <button class="screen-btn" id="rsvp-screen-btn">💌 RSVP NOW</button>
+        </div>
+
+        <!-- Panel 2: Name input (T9 multi-tap) -->
+        <div class="screen-panel" id="panel-rsvp-form">
+          <div style="font-family:'VT323',monospace;font-size:0.72rem;color:var(--screen-txt);opacity:0.45;margin-bottom:3px;">your name:</div>
+          <div class="t9-display" id="t9-display">
+            <span id="t9-committed"></span><span id="t9-pending" class="t9-pending"></span><span class="cursor"></span>
+          </div>
+          <div class="t9-hint">keys=letters · *=delete · 0=space · #=send</div>
+          <input type="hidden" id="rsvp-name" value="" />
+        </div>
+
+        <!-- Panel 3: Confirmed + calendar -->
+        <div class="screen-panel" id="panel-rsvp-done">
+          <div id="rsvp-confirm" style="font-family:'VT323',monospace;font-size:0.9rem;color:var(--screen-txt);text-align:center;padding:2px 0;text-shadow:0 0 8px currentColor;">
+            See you there! 🎉
+          </div>
+          <a class="screen-btn" id="gcal-btn" href="#" target="_blank">📅 GOOGLE CALENDAR</a>
+          <a class="screen-btn" id="ical-btn" href="#" download="invite.ics">🍎 APPLE / .ICS</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Nav row -->
+    <div class="nav-row">
+      <div class="soft-key" id="rsvp-open-btn">RSVP</div>
+      <div class="dpad" id="dpad-btn">
+        <div class="dpad-ring"></div>
+        <div class="dpad-center"></div>
+      </div>
+      <div class="soft-key replay" id="replay-btn">REDO</div>
+    </div>
+
+    <!-- Keyboard -->
+    <div class="keyboard-wrap">
+    <div class="keyboard" id="keyboard">
+      <div class="kb-row">
+        <div class="key" data-key="1"><span class="key-num">1</span><span class="key-alpha">.,?!</span></div>
+        <div class="key" data-key="2"><span class="key-num">2</span><span class="key-alpha">ABC</span></div>
+        <div class="key" data-key="3"><span class="key-num">3</span><span class="key-alpha">DEF</span></div>
+      </div>
+      <div class="kb-row">
+        <div class="key" data-key="4"><span class="key-num">4</span><span class="key-alpha">GHI</span></div>
+        <div class="key" data-key="5"><span class="key-num">5</span><span class="key-alpha">JKL</span></div>
+        <div class="key" data-key="6"><span class="key-num">6</span><span class="key-alpha">MNO</span></div>
+      </div>
+      <div class="kb-row">
+        <div class="key" data-key="7"><span class="key-num">7</span><span class="key-alpha">PQRS</span></div>
+        <div class="key" data-key="8"><span class="key-num">8</span><span class="key-alpha">TUV</span></div>
+        <div class="key" data-key="9"><span class="key-num">9</span><span class="key-alpha">WXYZ</span></div>
+      </div>
+      <div class="kb-row">
+        <div class="key" data-key="*"><span class="key-num">*</span><span class="key-alpha"></span></div>
+        <div class="key" data-key="0"><span class="key-num">0</span><span class="key-alpha">+</span></div>
+        <div class="key" data-key="#"><span class="key-num">#</span><span class="key-alpha"></span></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<script>
+// ═══════════════════════════════════════════════════════
+//  CONFIG
+// ═══════════════════════════════════════════════════════
+const EVENT = {
+  title:    "Adrian & Gala Birthday 🎉",
+  date:     "20250227", dateEnd: "20250228",
+  timeStart:"210000",   timeEnd: "010000",
+  location: "La Cave Café, Paris",
+  desc:     "You are invited! 9PM Open Mic & Piano · 10PM Open DJs (bring your USB). RSVP required."
+};
+const SMS =
+  "Hey! 🎉 You're invited to Adrian & Gala's birthday! " +
+  "Fri Feb 27 @ 9PM · La Cave Café Paris · " +
+  "Don't be late!\n\n" +
+  "9PM Open Mic and Piano\n" +
+  "10PM Open DJs (bring your USB)";
+
+// ═══════════════════════════════════════════════════════
+//  AUDIO ENGINE (original beat machine)
+// ═══════════════════════════════════════════════════════
+let ctx = null;
+
+function initAudio() {
+  if (ctx) {
+    if (ctx.state === 'suspended') ctx.resume();
+    return;
+  }
+  ctx = new (window.AudioContext || window.webkitAudioContext)();
+  if (ctx.state === 'suspended') ctx.resume();
+}
+
+// Master compressor so nothing clips
+function getMaster() {
+  if (!ctx._master) {
+    const comp = ctx.createDynamicsCompressor();
+    comp.threshold.value = -14;
+    comp.ratio.value = 6;
+    const vol = ctx.createGain();
+    vol.gain.value = 0.3;
+    vol.connect(comp);
+    comp.connect(ctx.destination);
+    ctx._master = vol;
+    ctx._comp = comp;
+  }
+  return ctx._master;
+}
+
+function setFullVolume() {
+  if (!ctx || !ctx._master) return;
+  ctx._master.gain.cancelScheduledValues(ctx.currentTime);
+  ctx._master.gain.setValueAtTime(ctx._master.gain.value, ctx.currentTime);
+  ctx._master.gain.linearRampToValueAtTime(1.0, ctx.currentTime + 0.3);
+}
+
+function setTypingVolume() {
+  if (!ctx || !ctx._master) return;
+  ctx._master.gain.cancelScheduledValues(ctx.currentTime);
+  ctx._master.gain.setValueAtTime(ctx._master.gain.value, ctx.currentTime);
+  ctx._master.gain.linearRampToValueAtTime(0.28, ctx.currentTime + 0.1);
+}
+
+// Tiny reverb send
+function getReverb() {
+  if (!ctx._reverb) {
+    const conv = ctx.createConvolver();
+    const len  = ctx.sampleRate * 1.4;
+    const buf  = ctx.createBuffer(2, len, ctx.sampleRate);
+    for (let c = 0; c < 2; c++) {
+      const d = buf.getChannelData(c);
+      for (let i = 0; i < len; i++)
+        d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 2.8);
+    }
+    conv.buffer = buf;
+    const g = ctx.createGain(); g.gain.value = 0.22;
+    conv.connect(g); g.connect(getMaster());
+    ctx._reverb = conv;
+  }
+  return ctx._reverb;
+}
+
+// ── shared helpers ────────────────────────────────────
+function osc(type, freq, t, dur, gainVal, dest, detune = 0) {
+  const o = ctx.createOscillator();
+  const g = ctx.createGain();
+  o.type = type;
+  o.frequency.value = freq;
+  if (detune) o.detune.value = detune;
+  o.connect(g); g.connect(dest);
+  g.gain.setValueAtTime(gainVal, t);
+  g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  o.start(t); o.stop(t + dur + 0.01);
+}
+
+function lpFilter(freq, q) {
+  const f = ctx.createBiquadFilter();
+  f.type = 'lowpass'; f.frequency.value = freq; f.Q.value = q;
+  f.connect(getMaster()); return f;
+}
+
+function bpFilter(freq, q) {
+  const f = ctx.createBiquadFilter();
+  f.type = 'bandpass'; f.frequency.value = freq; f.Q.value = q;
+  f.connect(getMaster()); f.connect(getReverb()); return f;
+}
+
+const SCALE = [220, 261.6, 293.6, 329.6, 392, 440, 523.2, 659.2, 784, 880];
+
+// ═══════════════════════════════════════════════════════
+//  12 BEAT PATTERNS — one per key
+// ═══════════════════════════════════════════════════════
+
+// 1 — Deep bass thump
+function beat1(t) {
+  const f = lpFilter(200, 8);
+  osc('sine', 55, t, 0.35, 0.9, f);
+  osc('sawtooth', 55, t, 0.18, 0.4, f);
+  const o = ctx.createOscillator(), g = ctx.createGain();
+  o.type = 'sine'; o.frequency.setValueAtTime(180, t);
+  o.frequency.exponentialRampToValueAtTime(50, t + 0.15);
+  o.connect(g); g.connect(getMaster());
+  g.gain.setValueAtTime(0.8, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.35);
+  o.start(t); o.stop(t + 0.36);
+}
+
+// 2 — Snappy snare crack
+function beat2(t) {
+  const buf = ctx.createBuffer(1, ctx.sampleRate * 0.18, ctx.sampleRate);
+  const d = buf.getChannelData(0);
+  for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+  const src = ctx.createBufferSource();
+  src.buffer = buf;
+  const hp = ctx.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 1800;
+  const g = ctx.createGain();
+  src.connect(hp); hp.connect(g); g.connect(getMaster());
+  g.gain.setValueAtTime(0.55, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.18);
+  src.start(t); src.stop(t + 0.19);
+  osc('triangle', 200, t, 0.08, 0.4, getMaster());
+}
+
+// 3 — Hi-hat tick
+function beat3(t) {
+  const buf = ctx.createBuffer(1, ctx.sampleRate * 0.06, ctx.sampleRate);
+  const d = buf.getChannelData(0);
+  for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+  const src = ctx.createBufferSource(); src.buffer = buf;
+  const hp = ctx.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 7000;
+  const g = ctx.createGain();
+  src.connect(hp); hp.connect(g); g.connect(getMaster());
+  g.gain.setValueAtTime(0.3, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.06);
+  src.start(t); src.stop(t + 0.07);
+}
+
+// 4 — Bailando lead melody riff
+function beat4(t) {
+  const notes = [440, 523.2, 659.2, 784];
+  const dest = bpFilter(2000, 0.8);
+  notes.forEach((freq, i) => {
+    const dt = t + i * 0.1;
+    osc('square', freq, dt, 0.14, 0.25, dest);
+    osc('square', freq, dt, 0.14, 0.12, dest, 8);
+  });
+}
+
+// 5 — Bass synth stab
+function beat5(t) {
+  const f = lpFilter(320, 10);
+  osc('sawtooth', 110, t, 0.22, 0.55, f);
+  osc('sawtooth', 110, t, 0.22, 0.25, f, 12);
+}
+
+// 6 — Chord stab
+function beat6(t) {
+  const dest = bpFilter(1200, 0.5);
+  [[220,1],[329.6,0.8],[440,0.7],[523.2,0.5]].forEach(([freq, vol]) => {
+    osc('sawtooth', freq, t, 0.28, vol * 0.22, dest);
+    osc('sawtooth', freq, t, 0.28, vol * 0.1, dest, 10);
+  });
+}
+
+// 7 — Descending melody
+function beat7(t) {
+  const notes = [784, 659.2, 523.2, 440];
+  const dest = bpFilter(1800, 1.0);
+  notes.forEach((freq, i) => {
+    osc('square', freq, t + i * 0.1, 0.14, 0.22, dest);
+  });
+}
+
+// 8 — Open hi-hat shimmer
+function beat8(t) {
+  const buf = ctx.createBuffer(1, ctx.sampleRate * 0.3, ctx.sampleRate);
+  const d = buf.getChannelData(0);
+  for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / d.length, 1.2);
+  const src = ctx.createBufferSource(); src.buffer = buf;
+  const hp = ctx.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 6000;
+  const g = ctx.createGain();
+  src.connect(hp); hp.connect(g); g.connect(getMaster()); g.connect(getReverb());
+  g.gain.setValueAtTime(0.25, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.3);
+  src.start(t); src.stop(t + 0.31);
+}
+
+// 9 — Sub bass drop
+function beat9(t) {
+  const f = lpFilter(150, 12);
+  osc('sine', 82.4, t, 0.4, 1.0, f);
+  const o = ctx.createOscillator(), g = ctx.createGain();
+  o.type = 'sine'; o.frequency.setValueAtTime(300, t);
+  o.frequency.exponentialRampToValueAtTime(82.4, t + 0.08);
+  o.connect(g); g.connect(getMaster());
+  g.gain.setValueAtTime(0.5, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.4);
+  o.start(t); o.stop(t + 0.41);
+}
+
+// * — Clap
+function beatStar(t) {
+  for (let hit = 0; hit < 3; hit++) {
+    const dt = t + hit * 0.018;
+    const buf = ctx.createBuffer(1, ctx.sampleRate * 0.1, ctx.sampleRate);
+    const d = buf.getChannelData(0);
+    for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / d.length, 3);
+    const src = ctx.createBufferSource(); src.buffer = buf;
+    const bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 1100; bp.Q.value = 0.7;
+    const g = ctx.createGain();
+    src.connect(bp); bp.connect(g); g.connect(getMaster()); g.connect(getReverb());
+    g.gain.setValueAtTime(0.45, dt); g.gain.exponentialRampToValueAtTime(0.001, dt + 0.1);
+    src.start(dt); src.stop(dt + 0.11);
+  }
+}
+
+// 0 — Tropical steel drum hit (party vibe)
+function beat0(t) {
+  const notes = [523.2, 659.2, 784, 1046.5]; // C5 E5 G5 C6 — bright major chord
+  notes.forEach((freq, i) => {
+    const o = ctx.createOscillator(), g = ctx.createGain();
+    o.type = 'sine';
+    o.frequency.setValueAtTime(freq * 1.02, t);
+    o.frequency.exponentialRampToValueAtTime(freq, t + 0.04);
+    const bp = ctx.createBiquadFilter(); bp.type = 'bandpass';
+    bp.frequency.value = freq; bp.Q.value = 12;
+    o.connect(bp); bp.connect(g);
+    g.connect(getMaster()); g.connect(getReverb());
+    const delay = i * 0.035;
+    g.gain.setValueAtTime(0, t);
+    g.gain.setValueAtTime(0.35 - i * 0.06, t + delay);
+    g.gain.exponentialRampToValueAtTime(0.001, t + delay + 0.5);
+    o.start(t + delay); o.stop(t + delay + 0.52);
+  });
+}
+
+// # — Riser/sweep
+function beatHash(t) {
+  const o = ctx.createOscillator(), g = ctx.createGain();
+  o.type = 'sawtooth';
+  o.frequency.setValueAtTime(200, t);
+  o.frequency.exponentialRampToValueAtTime(1800, t + 0.5);
+  const f = ctx.createBiquadFilter(); f.type = 'lowpass';
+  f.frequency.setValueAtTime(400, t);
+  f.frequency.exponentialRampToValueAtTime(4000, t + 0.5);
+  o.connect(f); f.connect(g); g.connect(getMaster()); g.connect(getReverb());
+  g.gain.setValueAtTime(0.3, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.5);
+  o.start(t); o.stop(t + 0.51);
+}
+
+const BEATS = {
+  '1': beat1, '2': beat2, '3': beat3,
+  '4': beat4, '5': beat5, '6': beat6,
+  '7': beat7, '8': beat8, '9': beat9,
+  '*': beatStar, '0': beat0, '#': beatHash
+};
+
+// ═══════════════════════════════════════════════════════
+//  THEME CHANGER — D-PAD EASTER EGG
+// ═══════════════════════════════════════════════════════
+let currentTheme = 0;
+const THEMES = [
+  // 0 = ice blue (default)
+  { bg:'#0a1420', txt:'#44ccff',
+    glowHi:'#c8eeff', glowMid:'#66d4ff', glowLo:'#44ccff',
+    shadow:'rgba(68,204,255,0.55)', shadow2:'rgba(68,204,255,0.2)' },
+  // 1 = matrix green
+  { bg:'#0c1c0c', txt:'#33ff66',
+    glowHi:'#c8ffd8', glowMid:'#66ee88', glowLo:'#33ff66',
+    shadow:'rgba(51,255,102,0.55)', shadow2:'rgba(51,255,102,0.2)' },
+  // 2 = amber
+  { bg:'#1a1200', txt:'#ffaa00',
+    glowHi:'#fff0c8', glowMid:'#ffcc44', glowLo:'#ffaa00',
+    shadow:'rgba(255,170,0,0.55)', shadow2:'rgba(255,170,0,0.2)' },
+  // 3 = hot pink
+  { bg:'#1a0a14', txt:'#ff44aa',
+    glowHi:'#ffc8e8', glowMid:'#ff66bb', glowLo:'#ff44aa',
+    shadow:'rgba(255,68,170,0.55)', shadow2:'rgba(255,68,170,0.2)' },
+  // 4 = ghost white
+  { bg:'#141414', txt:'#e8e8e8',
+    glowHi:'#ffffff', glowMid:'#dddddd', glowLo:'#cccccc',
+    shadow:'rgba(255,255,255,0.45)', shadow2:'rgba(255,255,255,0.15)' },
+];
+
+function applyTheme(idx) {
+  const t = THEMES[idx];
+  const r = document.documentElement.style;
+  r.setProperty('--screen-bg',  t.bg);
+  r.setProperty('--screen-txt', t.txt);
+  r.setProperty('--key-glow-hi',  t.glowHi);
+  r.setProperty('--key-glow-mid', t.glowMid);
+  r.setProperty('--key-glow-lo',  t.glowLo);
+  r.setProperty('--key-glow-shadow',  t.shadow);
+  r.setProperty('--key-glow-shadow2', t.shadow2);
+}
+
+function cycleTheme() {
+  currentTheme = (currentTheme + 1) % THEMES.length;
+  applyTheme(currentTheme);
+}
+
+// Wire the d-pad center button
+document.getElementById('dpad-btn').addEventListener('click', (e) => {
+  e.preventDefault();
+  cycleTheme();
+});
+document.getElementById('dpad-btn').addEventListener('touchstart', (e) => {
+  // Prevent double-fire on mobile (touchstart + click)
+}, { passive: true });
+
+// ═══════════════════════════════════════════════════════
+//  CLOCK
+// ═══════════════════════════════════════════════════════
+function updateClock() {
+  const n = new Date();
+  document.getElementById('clock').textContent =
+    String(n.getHours()).padStart(2,'0') + ':' + String(n.getMinutes()).padStart(2,'0');
+}
+updateClock(); setInterval(updateClock, 10000);
+
+// ═══════════════════════════════════════════════════════
+//  KEYBOARD MAP + PULSE (typing animation)
+// ═══════════════════════════════════════════════════════
+const KM = {
+  ' ':'0','.':'1',',':'1','?':'1','!':'1','·':'1',
+  a:'2',b:'2',c:'2', d:'3',e:'3',f:'3',
+  g:'4',h:'4',i:'4', j:'5',k:'5',l:'5',
+  m:'6',n:'6',o:'6', p:'7',q:'7',r:'7',s:'7',
+  t:'8',u:'8',v:'8', w:'9',x:'9',y:'9',z:'9',
+};
+const allKeys = Array.from(document.querySelectorAll('.key'));
+
+function flashKey(el) {
+  el.classList.remove('active');
+  void el.offsetWidth;
+  el.classList.add('active');
+  el.addEventListener('animationend', () => el.classList.remove('active'), { once: true });
+}
+
+function pulseKey(ch) {
+  const k = KM[ch.toLowerCase()] || String((Math.floor(Math.random()*9))+1);
+  const el = allKeys.find(e => e.dataset.key === k);
+  if (el) flashKey(el);
+  // Play beat sound quietly during typing
+  const fn = BEATS[k];
+  if (fn && ctx) fn(ctx.currentTime);
+}
+
+// ═══════════════════════════════════════════════════════
+//  SMS TYPING
+// ═══════════════════════════════════════════════════════
+const smsEl = document.getElementById('sms-text');
+const spd   = [58, 72, 52, 88, 65, 78, 48, 95, 60];
+let charIdx = 0;
+let isTyping = false;
+
+function typeNext() {
+  if (charIdx >= SMS.length) {
+    isTyping = false;
+    setFullVolume();
+    // Make "La Cave Café Paris" a clickable link
+    const venueURL = 'https://share.google/yPfIBfDS5GuFXCzIX';
+    smsEl.innerHTML = smsEl.textContent.replace(
+      'La Cave Café Paris',
+      `<a href="${venueURL}" target="_blank" style="color:var(--screen-txt);text-decoration:underline;text-underline-offset:2px;">La Cave Café Paris</a>`
+    );
+    setTimeout(() => showPanel('panel-rsvp-cta'), 400);
+    return;
+  }
+  const ch = SMS[charIdx++];
+  if (ch === '\n') {
+    smsEl.innerHTML += '<br>';
+  } else {
+    smsEl.appendChild(document.createTextNode(ch));
+  }
+  pulseKey(ch);
+  setTimeout(typeNext, spd[charIdx % spd.length] + (Math.random() < 0.1 ? 300 : 0));
+}
+
+function startTyping() {
+  smsEl.innerHTML = '';
+  charIdx = 0;
+  isTyping = true;
+  ['panel-rsvp-cta','panel-rsvp-form','panel-rsvp-done'].forEach(p => {
+    const el = document.getElementById(p);
+    if (el) { el.classList.remove('visible'); el.style.display = 'none'; }
+  });
+  setTypingVolume();
+  setTimeout(typeNext, 600);
+}
+
+// ═══════════════════════════════════════════════════════
+//  T9 MULTI-TAP ENGINE
+// ═══════════════════════════════════════════════════════
+const T9_MAP = {
+  '1': ['.', ',', '?', '!', '1'],
+  '2': ['a','b','c','2'],
+  '3': ['d','e','f','3'],
+  '4': ['g','h','i','4'],
+  '5': ['j','k','l','5'],
+  '6': ['m','n','o','6'],
+  '7': ['p','q','r','s','7'],
+  '8': ['t','u','v','8'],
+  '9': ['w','x','y','z','9'],
+};
+
+let t9Active   = false;
+let t9Text     = '';
+let t9LastKey  = null;
+let t9CycleIdx = 0;
+let t9Timer    = null;
+const T9_TIMEOUT = 900;
+let t9FirstChar = true;
+
+function t9Commit() {
+  clearTimeout(t9Timer);
+  const pendingEl = document.getElementById('t9-pending');
+  if (pendingEl && pendingEl.textContent) {
+    t9Text += pendingEl.textContent;
+    pendingEl.textContent = '';
+  }
+  t9LastKey = null;
+  t9CycleIdx = 0;
+  t9UpdateDisplay();
+  t9UpdateHidden();
+}
+
+function t9UpdateDisplay() {
+  const committed = document.getElementById('t9-committed');
+  if (committed) committed.textContent = t9Text;
+}
+
+function t9UpdateHidden() {
+  const hidden = document.getElementById('rsvp-name');
+  if (hidden) hidden.value = t9Text + (document.getElementById('t9-pending')?.textContent || '');
+}
+
+function t9HandleKey(key) {
+  if (!t9Active) return false;
+
+  const chars = T9_MAP[key];
+
+  // * = backspace/delete
+  if (key === '*') {
+    clearTimeout(t9Timer);
+    const pendingEl = document.getElementById('t9-pending');
+    if (pendingEl && pendingEl.textContent) {
+      pendingEl.textContent = '';
+      t9LastKey = null;
+      t9CycleIdx = 0;
+    } else if (t9Text.length > 0) {
+      t9Text = t9Text.slice(0, -1);
+      t9UpdateDisplay();
+    }
+    t9UpdateHidden();
+    if (t9Text.length === 0) t9FirstChar = true;
+    return true;
+  }
+
+  // # = submit RSVP
+  if (key === '#') {
+    t9Commit();
+    submitRSVP();
+    return true;
+  }
+
+  // 0 = space
+  if (key === '0') {
+    t9Commit();
+    t9Text += ' ';
+    t9UpdateDisplay();
+    t9UpdateHidden();
+    return true;
+  }
+
+  if (!chars) return false;
+
+  if (key === t9LastKey) {
+    clearTimeout(t9Timer);
+    t9CycleIdx = (t9CycleIdx + 1) % chars.length;
+  } else {
+    t9Commit();
+    t9CycleIdx = 0;
+  }
+  t9LastKey = key;
+
+  let ch = chars[t9CycleIdx];
+  if (t9FirstChar && /[a-z]/.test(ch)) {
+    ch = ch.toUpperCase();
+  }
+
+  const pendingEl = document.getElementById('t9-pending');
+  if (pendingEl) pendingEl.textContent = ch;
+
+  t9Timer = setTimeout(() => {
+    t9Commit();
+    if (t9FirstChar) t9FirstChar = false;
+  }, T9_TIMEOUT);
+
+  t9UpdateHidden();
+  return true;
+}
+
+// ═══════════════════════════════════════════════════════
+//  REPLAY / SEND BUTTON
+// ═══════════════════════════════════════════════════════
+document.getElementById('replay-btn').addEventListener('click', () => {
+  if (t9Active) {
+    submitRSVP();
+    return;
+  }
+  if (!isTyping) startTyping();
+});
+
+// ── Wire keys — beats + T9 input ─────────────────────
+allKeys.forEach(key => {
+  const handler = (e) => {
+    e.preventDefault();
+    initAudio();
+
+    // visual flash always
+    flashKey(key);
+
+    const k = key.dataset.key;
+
+    // If RSVP form is active, route to T9 engine
+    if (t9Active) {
+      t9HandleKey(k);
+      const fn = BEATS[k];
+      if (fn) fn(ctx.currentTime);
+      return;
+    }
+
+    // Normal mode: beat sounds (not during typing animation)
+    if (isTyping) return;
+    const fn = BEATS[k];
+    if (fn) fn(ctx.currentTime);
+  };
+  key.addEventListener('touchstart', handler, { passive: false });
+  key.addEventListener('mousedown',  handler);
+});
+
+// ═══════════════════════════════════════════════════════
+//  START — requires real tap so iOS Safari unlocks audio
+// ═══════════════════════════════════════════════════════
+let started = false;
+
+// Show a "tap to open" prompt on the screen
+(function showTapPrompt() {
+  const prompt = document.createElement('div');
+  prompt.id = 'tap-prompt';
+  prompt.innerHTML = '📩 TAP TO OPEN';
+  prompt.style.cssText = `
+    position:relative; z-index:2;
+    font-family:'VT323',monospace; font-size:1.1rem;
+    color:var(--screen-txt); text-align:center;
+    padding:18px 0; cursor:pointer;
+    text-shadow:0 0 8px currentColor;
+    animation: promptPulse 1.6s ease-in-out infinite;
+  `;
+  document.querySelector('.sms-bubble').appendChild(prompt);
+})();
+
+const promptStyle = document.createElement('style');
+promptStyle.textContent = `
+  @keyframes promptPulse {
+    0%,100% { opacity:0.7; }
+    50% { opacity:1; }
+  }
+`;
+document.head.appendChild(promptStyle);
+
+function start() {
+  if (started) return;
+  started = true;
+
+  initAudio();
+
+  // iOS Safari unlock
+  if (ctx && ctx.state === 'suspended') ctx.resume();
+  try {
+    const silent = ctx.createBuffer(1, 1, ctx.sampleRate);
+    const src = ctx.createBufferSource();
+    src.buffer = silent;
+    src.connect(ctx.destination);
+    src.start(0);
+  } catch(e) {}
+
+  const prompt = document.getElementById('tap-prompt');
+  if (prompt) prompt.remove();
+
+  startTyping();
+  document.removeEventListener('touchstart', start);
+  document.removeEventListener('click', start);
+}
+
+document.addEventListener('click', start);
+document.addEventListener('touchstart', start);
+
+// ═══════════════════════════════════════════════════════
+//  CALENDAR LINKS
+// ═══════════════════════════════════════════════════════
+function buildCalLinks() {
+  document.getElementById('gcal-btn').href =
+    'https://calendar.google.com/calendar/render?action=TEMPLATE' +
+    '&text='     + encodeURIComponent(EVENT.title) +
+    '&dates='    + EVENT.date + 'T' + EVENT.timeStart + '/' + EVENT.dateEnd + 'T' + EVENT.timeEnd +
+    '&details='  + encodeURIComponent(EVENT.desc) +
+    '&location=' + encodeURIComponent(EVENT.location);
+
+  const ics = [
+    'BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Birthday//EN',
+    'BEGIN:VEVENT',
+    'DTSTART:'     + EVENT.date + 'T' + EVENT.timeStart,
+    'DTEND:'       + EVENT.dateEnd + 'T' + EVENT.timeEnd,
+    'SUMMARY:'     + EVENT.title,
+    'DESCRIPTION:' + EVENT.desc,
+    'LOCATION:'    + EVENT.location,
+    'END:VEVENT','END:VCALENDAR'
+  ].join('\r\n');
+
+  const icsURL = URL.createObjectURL(new Blob([ics], {type:'text/calendar'}));
+  document.getElementById('ical-btn').href = icsURL;
+}
+
+// ═══════════════════════════════════════════════════════
+//  PANELS
+// ═══════════════════════════════════════════════════════
+function showPanel(id) {
+  ['panel-rsvp-cta','panel-rsvp-form','panel-rsvp-done'].forEach(p => {
+    const el = document.getElementById(p);
+    if (!el) return;
+    el.classList.remove('visible');
+    el.style.display = 'none';
+  });
+  if (id !== 'panel-rsvp-form') {
+    t9Active = false;
+    document.querySelector('.soft-key:first-child').textContent = 'RSVP';
+    document.querySelector('.soft-key.replay').textContent = 'REDO';
+  }
+  requestAnimationFrame(() => {
+    const target = document.getElementById(id);
+    if (!target) return;
+    target.style.display = 'flex';
+    requestAnimationFrame(() => target.classList.add('visible'));
+  });
+}
+
+// ═══════════════════════════════════════════════════════
+//  RSVP FLOW
+// ═══════════════════════════════════════════════════════
+
+// !! REPLACE THIS URL with your Google Apps Script URL after setup !!
+const SHEET_URL = 'https://script.google.com/macros/s/AKfycbzDmaliKiOQv708Dm4cwTRIwN3IaT2q6t3rQNBnuAzoPL5n_4GDqPAs1G4Gn1Xm5Euc/exec';
+
+function openRSVP() {
+  showPanel('panel-rsvp-form');
+  t9Active = true;
+  t9Text = '';
+  t9LastKey = null;
+  t9CycleIdx = 0;
+  t9FirstChar = true;
+  clearTimeout(t9Timer);
+  const committed = document.getElementById('t9-committed');
+  const pending = document.getElementById('t9-pending');
+  if (committed) committed.textContent = '';
+  if (pending) pending.textContent = '';
+  document.querySelector('.soft-key:first-child').textContent = 'DEL *';
+  document.querySelector('.soft-key.replay').textContent = 'SEND #';
+}
+
+// Soft key: RSVP / DEL
+document.getElementById('rsvp-open-btn').addEventListener('click', () => {
+  if (t9Active) {
+    t9HandleKey('*');
+    const starKey = allKeys.find(e => e.dataset.key === '*');
+    if (starKey) flashKey(starKey);
+    return;
+  }
+  openRSVP();
+});
+
+// On-screen RSVP button
+document.getElementById('rsvp-screen-btn').addEventListener('click', () => {
+  openRSVP();
+});
+
+async function submitRSVP() {
+  t9Commit();
+
+  const name = t9Text.trim();
+  if (!name) {
+    const display = document.getElementById('t9-display');
+    if (display) {
+      display.style.borderBottomColor = 'rgba(255,80,80,0.7)';
+      const committed = document.getElementById('t9-committed');
+      if (committed) committed.textContent = 'type your name!';
+      setTimeout(() => {
+        display.style.borderBottomColor = '';
+        if (committed) committed.textContent = '';
+      }, 1500);
+    }
+    return;
+  }
+
+  const committed = document.getElementById('t9-committed');
+  if (committed) committed.textContent = '⏳ SENDING...';
+  const pending = document.getElementById('t9-pending');
+  if (pending) pending.textContent = '';
+
+  try {
+    await fetch(SHEET_URL, {
+      method:  'POST',
+      mode:    'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ name, timestamp: new Date().toISOString() })
+    });
+  } catch(e) {}
+
+  t9Active = false;
+  document.querySelector('.soft-key:first-child').textContent = 'RSVP';
+  document.querySelector('.soft-key.replay').textContent = 'REDO';
+
+  buildCalLinks();
+  document.getElementById('rsvp-confirm').textContent = `See you there, ${name}! 🎉`;
+  showPanel('panel-rsvp-done');
+}
+
+document.getElementById('rsvp-send-btn')?.addEventListener('click', submitRSVP);
+
+</script>
+</body>
+</html>
