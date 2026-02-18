@@ -76,6 +76,7 @@ html, body {
   background:radial-gradient(ellipse at 50% 0%, rgba(0,0,0,0.2), transparent 75%);
   filter:blur(8px); border-radius:50%; z-index:-1;
 }
+.phone-wrap.capturing::after { display:none; }
 
 /* ══════════════════════════
    PHONE SHELL — K750i
@@ -434,7 +435,7 @@ const SMS =
   "Hey! 🍸 You're invited to Adrian & Gala's birthday! " +
   "Fri Feb 27 @ 9PM · La Cave Café, 75018 Paris · " +
   "Don't be late!" +
-  "\n\n9PM Open Mic and Piano 🎤🪗" +
+  "\n\n9PM\u00A0 Open Mic and Piano 🎤🪗" +
   "\n10PM Open DJs 🎧 (Bring Your USB)";
 
 // ═══════════════════════════════════════════════════════
@@ -1072,7 +1073,7 @@ function showPanel(id) {
 // ═══════════════════════════════════════════════════════
 
 // !! REPLACE THIS URL with your Google Apps Script URL after setup !!
-const SHEET_URL = 'https://script.google.com/macros/s/AKfycbzDmaliKiOQv708Dm4cwTRIwN3IaT2q6t3rQNBnuAzoPL5n_4GDqPAs1G4Gn1Xm5Euc/exec';
+const SHEET_URL = 'https://script.google.com/macros/s/AKfycbxZYVynTYjkA5AfW8pK3RMjkCHBMCw7dbNIrFFyXOwCuTMhz6_GcVh_uaqgoJF_0p5-CQ/exec';
 
 function openRSVP() {
   showPanel('panel-rsvp-form');
@@ -1156,10 +1157,8 @@ document.getElementById('save-invite-btn').addEventListener('click', async () =>
   const btn = document.getElementById('save-invite-btn');
   btn.textContent = '⏳ SAVING...';
 
-  // Check if html2canvas loaded
   if (typeof html2canvas === 'undefined') {
     btn.textContent = '❌ TRY AGAIN';
-    // Try loading it dynamically
     const s = document.createElement('script');
     s.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
     document.head.appendChild(s);
@@ -1168,59 +1167,70 @@ document.getElementById('save-invite-btn').addEventListener('click', async () =>
   }
 
   try {
-    // Hide panels temporarily so just the invite text shows
+    // Hide panels, nav, keyboard
     const panels = document.querySelectorAll('.screen-panel');
     panels.forEach(p => p.style.display = 'none');
-
-    // Hide nav row and keyboard for cleaner screenshot
     const navRow = document.querySelector('.nav-row');
     const kbWrap = document.querySelector('.keyboard-wrap');
     navRow.style.display = 'none';
     kbWrap.style.display = 'none';
 
-    // Capture the phone element
-    const phone = document.querySelector('.phone');
-    const canvas = await html2canvas(phone, {
+    // Disable animations/transforms that break html2canvas
+    const phoneWrap = document.querySelector('.phone-wrap');
+    const origStyle = phoneWrap.style.cssText;
+    phoneWrap.style.animation = 'none';
+    phoneWrap.style.opacity = '1';
+    phoneWrap.style.transform = 'none';
+
+    // Also hide the shadow pseudo-element by adding a temp class
+    phoneWrap.classList.add('capturing');
+
+    // Wait a frame for styles to apply
+    await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+
+    const canvas = await html2canvas(phoneWrap, {
       backgroundColor: '#ffffff',
       scale: 2,
       useCORS: true,
       logging: false
     });
 
-    // Restore UI
+    // Restore everything
+    phoneWrap.style.cssText = origStyle;
+    phoneWrap.classList.remove('capturing');
     navRow.style.display = '';
     kbWrap.style.display = '';
     showPanel('panel-rsvp-done');
 
-    // Try share on mobile, download on desktop
-    if (navigator.share && navigator.canShare) {
+    const blob = await new Promise(r => canvas.toBlob(r, 'image/png'));
+    const file = new File([blob], 'invitation.png', { type: 'image/png' });
+
+    // Try native share on mobile (saves to Photos on iPhone)
+    if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
       try {
-        const blob = await new Promise(r => canvas.toBlob(r, 'image/png'));
-        const file = new File([blob], 'invitation.png', { type: 'image/png' });
-        if (navigator.canShare({ files: [file] })) {
-          await navigator.share({ files: [file], title: 'Birthday Invitation' });
-          btn.textContent = '📸 SAVE INVITATION';
-          return;
-        }
+        await navigator.share({ files: [file], title: 'Birthday Invitation' });
+        btn.textContent = '📸 SAVE INVITATION';
+        return;
       } catch(e) { /* fall through to download */ }
     }
 
     // Desktop download
     const link = document.createElement('a');
     link.download = 'invitation.png';
-    link.href = canvas.toDataURL('image/png');
+    link.href = URL.createObjectURL(blob);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    URL.revokeObjectURL(link.href);
 
     btn.textContent = '📸 SAVED ✓';
     setTimeout(() => btn.textContent = '📸 SAVE INVITATION', 2000);
   } catch(e) {
     console.error('Screenshot failed:', e);
     btn.textContent = '❌ ERROR';
-    // Restore UI on error
     document.querySelector('.nav-row').style.display = '';
     document.querySelector('.keyboard-wrap').style.display = '';
+    document.querySelector('.phone-wrap').classList.remove('capturing');
     showPanel('panel-rsvp-done');
     setTimeout(() => btn.textContent = '📸 SAVE INVITATION', 2000);
   }
